@@ -8,6 +8,6 @@ const statusDown: ServiceStatusResponse = {
 export function SetupErrorHandler(app: Express) {
     app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         console.error(err);
-        res.json(statusDown);
+        res.status(503).json(statusDown);
     });
 }

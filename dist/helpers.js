@@ -8,7 +8,7 @@ const statusDown = {
 function SetupErrorHandler(app) {
     app.use((err, req, res, next) => {
         console.error(err);
-        res.json(statusDown);
+        res.status(503).json(statusDown);
     });
 }
 exports.SetupErrorHandler = SetupErrorHandler;
