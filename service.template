@@ -1,0 +1,13 @@
+[Unit]
+Description=SERvice Health MONitor
+After=network.target
+
+[Service]
+User=$SUDO_USER
+Restart=on-failure
+WorkingDirectory=$PWD
+Environment=NODE_ENV=production
+ExecStart=$NODE_BINARY dist/index.js
+
+[Install]
+WantedBy=multi-user.target
