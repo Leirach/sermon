@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthCheckMinecraft = void 0;
 const types_1 = require("../types");
-const gamedig_1 = require("gamedig");
 const bedrock_protocol_1 = require("bedrock-protocol");
 const port = parseInt(process.env.SERVICE_MINECRAFT_PORT) || 19132;
 const url = process.env.SERVICE_MINECRAFT_URL || "127.0.0.1";
@@ -27,6 +26,7 @@ function HealthCheckMinecraft(app) {
     }));
 }
 exports.HealthCheckMinecraft = HealthCheckMinecraft;
+// GameDig is a lot slower than bedrook-tools ~2000ms
 function BedrockPing() {
     return __awaiter(this, void 0, void 0, function* () {
         var status = yield (0, bedrock_protocol_1.ping)({
@@ -35,21 +35,9 @@ function BedrockPing() {
         });
         return {
             status: types_1.ServiceStatus.up,
-            players: status.playersOnline
-        };
-    });
-}
-// gamedig takes upwards of 2 sec on localhost query
-function GameDigQuery() {
-    return __awaiter(this, void 0, void 0, function* () {
-        var status = yield gamedig_1.GameDig.query({
-            type: 'mbe',
-            host: url,
-            port: port
-        });
-        return {
-            status: types_1.ServiceStatus.up,
-            players: status.numplayers
+            players: status.playersOnline,
+            world: status.levelName,
+            version: status.version
         };
     });
 }

@@ -24,7 +24,8 @@ function HealthCheckValheim(app) {
             });
             const vStatus = {
                 status: types_1.ServiceStatus.up,
-                players: status.numplayers
+                players: status.numplayers,
+                world: status.map
             };
             res.json(vStatus);
         }

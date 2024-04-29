@@ -5,6 +5,8 @@ import { ping } from 'bedrock-protocol';
 
 interface MinecraftStatus extends ServiceStatusResponse {
     players: number
+    world: string,
+    version: string
 }
 
 const port = parseInt(process.env.SERVICE_MINECRAFT_PORT) || 19132;
@@ -22,6 +24,7 @@ export function HealthCheckMinecraft(app: Express): void {
     });
 }
 
+// GameDig is a lot slower than bedrook-tools ~2000ms
 async function BedrockPing(): Promise<MinecraftStatus> {
     var status = await ping({
         host: url,
@@ -30,20 +33,8 @@ async function BedrockPing(): Promise<MinecraftStatus> {
 
     return {
         status: ServiceStatus.up,
-        players: status.playersOnline
-    };
-}
-
-// gamedig takes upwards of 2 sec on localhost query
-async function GameDigQuery(): Promise<MinecraftStatus> {
-    var status = await GameDig.query({
-        type: 'mbe',
-        host: url,
-        port: port
-    });
-
-    return {
-        status: ServiceStatus.up,
-        players: status.numplayers
+        players: status.playersOnline,
+        world: status.levelName,
+        version: status.version
     };
 }

@@ -4,6 +4,7 @@ import { GameDig } from 'gamedig';
 
 interface ValheimStatus extends ServiceStatusResponse {
     players: number
+    world: string
 }
 
 export function HealthCheckValheim(app: Express): void {
@@ -19,7 +20,8 @@ export function HealthCheckValheim(app: Express): void {
 
             const vStatus: ValheimStatus = {
                 status: ServiceStatus.up,
-                players: status.numplayers
+                players: status.numplayers,
+                world: status.map
             };
             res.json(vStatus);
         }
