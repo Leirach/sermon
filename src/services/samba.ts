@@ -10,7 +10,6 @@ interface SambaStatus extends ServiceStatusResponse {}
 export function HealthCheckSamba(app: Express): void {
     app.get('/samba', async (req, res, next) => {
         try {
-            console.log("huh");
             await execAsync("smbclient -U nobody% -L localhost");
 
             const sambastatus: SambaStatus = {

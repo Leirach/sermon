@@ -9,23 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HealthCheckSamba = void 0;
-const child_process_1 = require("child_process");
+exports.HealthCheckDuckDns = void 0;
+const promises_1 = require("fs/promises");
 const types_1 = require("../types");
-const util_1 = require("util");
-const execAsync = (0, util_1.promisify)(child_process_1.exec);
-function HealthCheckSamba(app) {
-    app.get('/samba', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+function HealthCheckDuckDns(app) {
+    app.get('/duckdns', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
         try {
-            yield execAsync("smbclient -U nobody% -L localhost");
-            const sambastatus = {
-                status: types_1.ServiceStatus.up
+            var fileStat = yield (0, promises_1.stat)(process.env.DUCKDNS_LOG_PATH);
+            var file = yield (0, promises_1.readFile)(process.env.DUCKDNS_LOG_PATH, 'utf-8');
+            const duckStatus = {
+                status: file == "OK" ? types_1.ServiceStatus.up : types_1.ServiceStatus.down,
+                lastUpdate: fileStat.mtime
             };
-            res.json(sambastatus);
+            res.json(duckStatus);
         }
         catch (err) {
             next(err);
         }
     }));
 }
-exports.HealthCheckSamba = HealthCheckSamba;
+exports.HealthCheckDuckDns = HealthCheckDuckDns;
