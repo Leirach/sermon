@@ -16,6 +16,19 @@ if [ -z "$NODE_BINARY" ]; then
     exit 1
 fi
 
+WG_BIN=$(which wg)
+if [ -z "$WG_BIN" ]; then
+    echo "wireguard not found, adding default path /usr/bin/wg to sudoers"
+    WG_BIN=/usr/bin/wg
+fi
+
+SUDOERS_FILE=/etc/sudoers.d/wg_allow_$SUDO_USER
+
+echo "$SUDO_USER ALL=(ALL) NOPASSWD: $WG_BIN" | tee $SUDOERS_FILE >/dev/null
+chmod 0440 $SUDOERS_FILE
+
+echo "Added $WG_BIN to $SUDOERS_FILE"
+
 envsubst < service.template > /etc/systemd/system/sermon.service
 
 systemctl daemon-reload

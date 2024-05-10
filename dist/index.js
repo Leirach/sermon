@@ -10,6 +10,7 @@ const samba_1 = require("./services/samba");
 const valheim_1 = require("./services/valheim");
 const helpers_1 = require("./helpers");
 const duckdns_1 = require("./services/duckdns");
+const wireguard_1 = require("./services/wireguard");
 if (process.env.NODE_ENV == "production") {
     dotenv_1.default.config({ path: ".env.production" });
 }
@@ -22,6 +23,7 @@ const PORT = process.env.PORT || 3000;
 (0, samba_1.HealthCheckSamba)(app);
 (0, valheim_1.HealthCheckValheim)(app);
 (0, duckdns_1.HealthCheckDuckDns)(app);
+(0, wireguard_1.HealthCheckWireGuard)(app);
 (0, helpers_1.SetupErrorHandler)(app);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
