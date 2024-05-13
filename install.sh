@@ -1,10 +1,5 @@
 #!/bin/bash
-if [ "$(id -u)" -ne 0 ]; then
-    echo "ERROR: This script must be run with sudo"
-    exit 1
-fi
-
-IS_ACTIVE=$(systemctl is-active sermon.service)
+IS_ACTIVE=$(sudo systemctl is-active sermon.service)
 if [ "$IS_ACTIVE" == "active" ]; then
     echo "Service is already installed and active"
     exit 0
@@ -16,21 +11,22 @@ if [ -z "$NODE_BINARY" ]; then
     exit 1
 fi
 
+npm install --omit=dev
+
 WG_BIN=$(which wg)
 if [ -z "$WG_BIN" ]; then
-    echo "wireguard not found, adding default path /usr/bin/wg to sudoers"
+    echo "wireguard not found, using default path /usr/bin/wg"
     WG_BIN=/usr/bin/wg
 fi
 
-SUDOERS_FILE=/etc/sudoers.d/wg_allow_$SUDO_USER
+SUDOERS_FILE=/etc/sudoers.d/wg_allow_$USER
 
-echo "$SUDO_USER ALL=(ALL) NOPASSWD: $WG_BIN" | tee $SUDOERS_FILE >/dev/null
-chmod 0440 $SUDOERS_FILE
+echo "$USER ALL=(ALL) NOPASSWD: $WG_BIN" | sudo tee $SUDOERS_FILE > /dev/null
+sudo chmod 0440 $SUDOERS_FILE
 
 echo "Added $WG_BIN to $SUDOERS_FILE"
 
-envsubst < service.template > /etc/systemd/system/sermon.service
-
-systemctl daemon-reload
-systemctl enable sermon.service
-systemctl start sermon.service
+envsubst < service.template | sudo tee -a /etc/systemd/system/sermon.service > /dev/null
+sudo systemctl daemon-reload
+sudo systemctl enable sermon.service
+sudo systemctl start sermon.service
