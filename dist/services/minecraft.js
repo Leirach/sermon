@@ -12,12 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthCheckMinecraft = void 0;
 const types_1 = require("../types");
 const bedrock_protocol_1 = require("bedrock-protocol");
-const port = parseInt(process.env.SERVICE_MINECRAFT_PORT) || 19132;
+const defaultPort = parseInt(process.env.SERVICE_MINECRAFT_PORT) || 19132;
 const url = process.env.SERVICE_MINECRAFT_URL || "127.0.0.1";
 function HealthCheckMinecraft(app) {
     app.get('/minecraft', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
         try {
-            const serverResponse = yield BedrockPing();
+            const portNumber = parseInt(req.query.port);
+            const serverResponse = yield BedrockPing(portNumber !== null && portNumber !== void 0 ? portNumber : defaultPort);
             res.json(serverResponse);
         }
         catch (err) {
@@ -27,7 +28,7 @@ function HealthCheckMinecraft(app) {
 }
 exports.HealthCheckMinecraft = HealthCheckMinecraft;
 // GameDig is a lot slower than bedrook-tools ~2000ms
-function BedrockPing() {
+function BedrockPing(port) {
     return __awaiter(this, void 0, void 0, function* () {
         var status = yield (0, bedrock_protocol_1.ping)({
             host: url,
