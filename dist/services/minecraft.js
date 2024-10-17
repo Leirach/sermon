@@ -18,7 +18,7 @@ function HealthCheckMinecraft(app) {
     app.get('/minecraft', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
         try {
             const portNumber = parseInt(req.query.port);
-            const serverResponse = yield BedrockPing(portNumber !== null && portNumber !== void 0 ? portNumber : defaultPort);
+            const serverResponse = yield BedrockPing(portNumber || defaultPort);
             res.json(serverResponse);
         }
         catch (err) {
